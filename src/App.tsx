@@ -3,8 +3,13 @@ import './App.css';
 import UserInfo from './components/UserInfo';
 import { InitialData } from './types/InitialData';
 import UserContext from './lib/UserContext';
+import Board from './components/Board';
+import { InitialSourceMap } from './types/SourceMap';
 
 function App() {
+  const [moves, setMoves] = useState<number>(0)
+  const [board, setBoard] = useState<any[]>([])
+  const [sourceMap, setSourceMap] = useState<InitialSourceMap>({top:[], bottom:[], left:[], right:[]})
   const [stats, setStats] = useState<InitialData>({
     userId: '',
     width: 0,
@@ -33,8 +38,19 @@ function App() {
   }, [])
 
   return (
-    <UserContext.Provider value={{stats}}>
-      <UserInfo />
+    <UserContext.Provider value={{
+      stats,
+      moves,
+      setMoves,
+      board,
+      setBoard,
+      sourceMap,
+      setSourceMap
+    }}>
+      <div className='max-w-wrapper mx-auto p-12'>
+        <UserInfo />
+        <Board />
+      </div>
     </UserContext.Provider>
   );
 }
