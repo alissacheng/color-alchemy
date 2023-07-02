@@ -7,7 +7,7 @@ interface SourceData{
 }
 
 const Source = ({id}:SourceData) => {
-  const {moves, setMoves, setSourceMap, sourceMap}:any = useContext(UserContext);
+  const {moves, setMoves, setSourceMap, sourceMap, setLastMove}:any = useContext(UserContext);
   const [color, setColor] = useState<string>('0,0,0')
 
   useEffect(()=> {
@@ -18,10 +18,11 @@ const Source = ({id}:SourceData) => {
       const newSourceMap:InitialSourceMap = {...sourceMap}
       newSourceMap[direction as keyof typeof newSourceMap][position] = color
       setSourceMap(newSourceMap)
-      console.log(direction, position, newSourceMap)
+      setLastMove(id + '-' + color)
+      // console.log(direction, position, newSourceMap)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [color, id])
+  }, [color])
 
   const newMove = () => {
     if(moves < 3 && color === '0,0,0'){

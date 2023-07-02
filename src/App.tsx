@@ -5,10 +5,14 @@ import { InitialData } from './types/InitialData';
 import UserContext from './lib/UserContext';
 import Board from './components/Board';
 import { InitialSourceMap } from './types/SourceMap';
+import getDelta from './lib/getDelta';
 
 function App() {
   const [moves, setMoves] = useState<number>(0)
+  const [lastMove, setLastMove] = useState<string>('')
   const [board, setBoard] = useState<any[]>([])
+  const [closestColor, setClosestColor] = useState<string>('0,0,0')
+  const [delta, setDelta] = useState<number>(1)
   const [sourceMap, setSourceMap] = useState<InitialSourceMap>({top:[], bottom:[], left:[], right:[]})
   const [stats, setStats] = useState<InitialData>({
     userId: '',
@@ -30,6 +34,8 @@ function App() {
     .then(response => response.json())
     .then((data:InitialData) => {
       setStats({...data, color: `rgb(${data.target.join()})` })
+      const newDelta = getDelta(data.target.join(), closestColor)
+      setDelta(newDelta)
     })
     .catch(error => {
       // Handle any errors
@@ -45,7 +51,13 @@ function App() {
       board,
       setBoard,
       sourceMap,
-      setSourceMap
+      setSourceMap,
+      lastMove,
+      setLastMove,
+      closestColor,
+      setClosestColor,
+      delta,
+      setDelta
     }}>
       <div className='max-w-wrapper mx-auto p-12'>
         <UserInfo />

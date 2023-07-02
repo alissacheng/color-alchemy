@@ -3,15 +3,17 @@ import UserContext from "../../lib/UserContext";
 import Tile from "./Tile";
 import Source from "./Source";
 import { InitialSourceMap } from "../../types/SourceMap";
+import getDelta from "../../lib/getDelta";
 
 const Board = () => {
-  const {stats, board, setBoard, setSourceMap, sourceMap}:any = useContext(UserContext);
+  const {stats, board, setBoard, setSourceMap, sourceMap, moves, setDelta, delta, setClosestColor}:any = useContext(UserContext);
 
   const initBoard = () => {
     //empty source column
     const sourceColumn:any[]=[];
-    //height = row, width = columns
     const newSource:InitialSourceMap = {top:[], bottom:[], right: [], left:[]}
+
+     //Create board, height = row, width = columns
     const newBoard:any[] = [];
     ([...Array(stats.height)]).forEach((row:any, index)=>{
       //create rows
@@ -39,6 +41,22 @@ const Board = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stats])
+
+  useEffect(()=>{
+    //update closest color every time a move is made/board is updated
+    if(moves > 0){
+      board.forEach((row:any[])=>{
+        row.forEach((color:string)=>{
+          const newDelta = getDelta(stats.target.join(), color)
+          if(newDelta < delta){
+            setDelta(newDelta)
+            setClosestColor(color)
+          }
+        })
+      })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [board])
 
   return(
     <div className="my-12">

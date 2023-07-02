@@ -3,7 +3,7 @@ import UserContext from "../../lib/UserContext";
 import Tile from "../Board/Tile";
 
 const UserInfo = () => {
-  const {stats, moves}:any = useContext(UserContext);
+  const {stats, moves, closestColor, delta}:any = useContext(UserContext);
 
   return(
     <div className="text-left flex flex-col space-y-3">
@@ -14,16 +14,13 @@ const UserInfo = () => {
         <p>Target color </p>
         <Tile tileColor={stats?.target.join()} position={{row:null, column:null}} />
       </div>
-      <p className="flex items-center space-x-2">
-        <span>Closest color </span>
-        <span 
-          className={`w-6 h-6 block rounded-[4px] border-gray-400 border-2`} 
-          style={{background: stats?.color}}>
-        </span>
-        <span>
-          Δ =
-        </span>
-      </p>
+      <div className="flex items-center space-x-2">
+        <p>Closest color </p>
+        <Tile tileColor={closestColor} position={{row:null, column:null}} />
+        <p>
+          Δ = {delta}
+        </p>
+      </div>
     </div>
   )
 }
