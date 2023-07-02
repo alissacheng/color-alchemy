@@ -7,7 +7,8 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const Board: React.FC<any> = () => {
-  const { stats, board, setBoard, setSourceMap, sourceMap }:any = useContext(UserContext);
+  const { stats, board, setBoard }:any = useContext(UserContext);
+  const [sourceMap, setSourceMap] = useState<InitialSourceMap>({top:[], bottom:[], left:[], right:[]})
 
   const initBoard = () => {
     //empty source column
@@ -50,7 +51,7 @@ const Board: React.FC<any> = () => {
           <div className="w-7 h-7 block rounded-[4px]">
           </div>
           {sourceMap.top.map((tileColor:string, index:number)=>{
-            return <Source  key={`top source,${index}`} id={'top-'+index}/>
+            return <Source key={`top source,${index}`} id={'top-'+index} sourceMap={sourceMap} setSourceMap={(newMap)=>setSourceMap(newMap)}/>
           })}
         </div>
         {board.map((row:any[], rowNum:number)=>{
@@ -59,9 +60,23 @@ const Board: React.FC<any> = () => {
               {row.map((tileColor:string, colNum)=>{
                 return(
                   <>
-                    {colNum === 0 && <Source key={`left source,${rowNum}`} id={'left-'+rowNum} />}
+                    {colNum === 0 && (
+                      <Source 
+                        key={`left source,${rowNum}`} 
+                        id={'left-'+rowNum} 
+                        sourceMap={sourceMap} 
+                        setSourceMap={(newMap)=>setSourceMap(newMap)}
+                      />
+                    )}
                     <Tile tileColor={tileColor} position={{row: rowNum, column: colNum}} key={`${rowNum},${colNum}`} />
-                    {colNum === stats.width -1 && <Source key={`right source,${rowNum}`} id={'right-'+rowNum} />}
+                    {colNum === stats.width -1 && (
+                      <Source 
+                        key={`right source,${rowNum}`} 
+                        id={'right-'+rowNum} 
+                        sourceMap={sourceMap} 
+                        setSourceMap={(newMap)=>setSourceMap(newMap)}
+                      />
+                    )}
                   </>
                 )
               })}
@@ -73,7 +88,7 @@ const Board: React.FC<any> = () => {
           <div className="w-7 h-7 block rounded-[4px]">
           </div>
           {sourceMap.bottom.map((tileColor:string, index:number)=>{
-            return <Source key={`bottom source,${index}`} id={'bottom-'+index} />
+            return <Source key={`bottom source,${index}`} id={'bottom-'+index} sourceMap={sourceMap} setSourceMap={(newMap)=>setSourceMap(newMap)} />
           })}
         </div>
       </div>

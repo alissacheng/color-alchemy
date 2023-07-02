@@ -23,8 +23,8 @@ const Tile: React.FC<TileData> = ({tileColor, position}:TileData) => {
     console.log(numerator, denominator)
     const percentage:number = numerator/denominator
     const newColor:string = (srcColor.split(',')).map((number:string, index) => {
-      //number cannot exceed 225
-      return Math.min(Math.round(parseInt(number) * percentage) + parseInt(oldColor.split(',')[index]), 225)
+      //number cannot exceed 255
+      return Math.min(Math.round(parseInt(number) * percentage) + parseInt(oldColor.split(',')[index]), 255)
     }).join();
     //update tile color visually, update board in state
     setColor(newColor)

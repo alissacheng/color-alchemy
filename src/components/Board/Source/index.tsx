@@ -3,11 +3,13 @@ import UserContext from "../../../lib/UserContext";
 import { InitialSourceMap } from "../../../types/SourceMap";
 
 interface SourceData{
-  id:string
+  id:string,
+  sourceMap:InitialSourceMap,
+  setSourceMap:(newMap:InitialSourceMap) => void
 }
 
-const Source: React.FC<SourceData> = ({id}:SourceData) => {
-  const {moves, setMoves, setSourceMap, sourceMap, setLastMove}:any = useContext(UserContext);
+const Source: React.FC<SourceData> = ({id, sourceMap, setSourceMap}:SourceData) => {
+  const {moves, setMoves, setLastMove}:any = useContext(UserContext);
   const [color, setColor] = useState<string>('0,0,0')
 
   useEffect(()=> {

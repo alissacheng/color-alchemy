@@ -3,7 +3,7 @@ import './App.css';
 import UserInfo from './components/UserInfo';
 import UserContext from './lib/UserContext';
 import Board from './components/Board';
-import { InitialSourceMap } from './types/SourceMap';
+// import { InitialSourceMap } from './types/SourceMap';
 import { InitialData } from './types/InitialData';
 
 const App: React.FC = () => {
@@ -11,8 +11,7 @@ const App: React.FC = () => {
   const [lastMove, setLastMove] = useState<string>('')
   const [board, setBoard] = useState<any[]>([])
   const [closestColor, setClosestColor] = useState<string>('0,0,0')
-  // const [delta, setDelta] = useState<number>(1)
-  const [sourceMap, setSourceMap] = useState<InitialSourceMap>({top:[], bottom:[], left:[], right:[]})
+  // const [sourceMap, setSourceMap] = useState<InitialSourceMap>({top:[], bottom:[], left:[], right:[]})
   const [stats, setStats] = useState<InitialData>({
     userId: '',
     width: 0,
@@ -31,14 +30,10 @@ const App: React.FC = () => {
       setMoves,
       board,
       setBoard,
-      sourceMap,
-      setSourceMap,
       lastMove,
       setLastMove,
       closestColor,
       setClosestColor,
-      // delta,
-      // setDelta
     }}>
       <div className='max-w-wrapper mx-auto p-12'>
         <UserInfo />
