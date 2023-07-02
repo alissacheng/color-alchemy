@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import UserContext from "../../lib/UserContext";
+import UserContext from "../../../lib/UserContext";
 
 interface TileData{
   tileColor: string,
@@ -9,7 +9,7 @@ interface TileData{
   }
 }
 
-const Tile = ({tileColor, position}:TileData) => {
+const Tile: React.FC<TileData> = ({tileColor, position}:TileData) => {
   const {lastMove, stats, moves, board, setBoard, closestColor}:any = useContext(UserContext);
   const [color, setColor] = useState<string>('0,0,0')
   const [mouseOver, setMouseOver] = useState<boolean>(false)
@@ -61,7 +61,7 @@ const Tile = ({tileColor, position}:TileData) => {
     <div 
       className={`w-7 relative h-7 block rounded-[4px] border-[2px]
         ${(position.row !== null && closestColor === color && moves > 0) || (moves === 0 && position.row === 0 && position.column === 0) ? ' border-red-600 ' : ' border-[#C0C0C0] '}
-        ${affected && position.row !== null && moves > 2 ? 'cursor-pointer' : ''}`}
+        ${position.row !== null && moves > 2 ? 'cursor-pointer' : ''}`}
       style={{background: 'rgb('+color+')'}}
       onMouseOver={()=>setMouseOver(true)}
       onMouseLeave={()=>setMouseOver(false)}
