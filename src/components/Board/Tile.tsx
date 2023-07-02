@@ -23,7 +23,7 @@ const Tile = ({tileColor, position}:TileData) => {
     console.log(numerator, denominator)
     const percentage:number = numerator/denominator
     const newColor:string = (srcColor.split(',')).map((number:string, index) => {
-      //number cannot exceed 255
+      //number cannot exceed 225
       return Math.min(Math.round(parseInt(number) * percentage) + parseInt(oldColor.split(',')[index]), 225)
     }).join();
     //update tile color visually, update board in state
@@ -59,14 +59,15 @@ const Tile = ({tileColor, position}:TileData) => {
 
   return(
     <div 
-      className={`w-6 relative h-6 block rounded-[4px] ${closestColor === color && moves > 0 ? 'border-red-700' : 'border-gray-400'} border-2 
+      className={`w-7 relative h-7 block rounded-[4px] border-[2px]
+        ${(position.row !== null && closestColor === color && moves > 0) || (moves === 0 && position.row === 0 && position.column === 0) ? ' border-red-600 ' : ' border-[#C0C0C0] '}
         ${affected && position.row !== null && moves > 2 ? 'cursor-pointer' : ''}`}
       style={{background: 'rgb('+color+')'}}
       onMouseOver={()=>setMouseOver(true)}
       onMouseLeave={()=>setMouseOver(false)}
     >
       {mouseOver && (
-        <div className="tooltip z-10 text-xs absolute bg-gray-200 text-black rounded-[3px] shadow-md top-[26px] left-1/2 p-[2px]">
+        <div className="tooltip z-10 text-xs absolute bg-gray-300 text-black rounded-[1px] opacity-90 shadow-md top-[26px] left-1/2 p-[3px]">
           <p>{tileColor}</p>
         </div>
       )}

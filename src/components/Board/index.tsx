@@ -6,7 +6,7 @@ import { InitialSourceMap } from "../../types/SourceMap";
 import getDelta from "../../lib/getDelta";
 
 const Board = () => {
-  const {stats, board, setBoard, setSourceMap, sourceMap, moves, setDelta, delta, setClosestColor}:any = useContext(UserContext);
+  const {stats, board, setBoard, setSourceMap, sourceMap, moves, setDelta, delta, closestColor, setClosestColor}:any = useContext(UserContext);
 
   const initBoard = () => {
     //empty source column
@@ -45,15 +45,19 @@ const Board = () => {
   useEffect(()=>{
     //update closest color every time a move is made/board is updated
     if(moves > 0){
+      let smallestDelta:number = delta
+      let newClosestColor:string = closestColor
       board.forEach((row:any[])=>{
         row.forEach((color:string)=>{
-          const newDelta = getDelta(stats.target.join(), color)
-          if(newDelta < delta){
-            setDelta(newDelta)
-            setClosestColor(color)
+          const newDelta:number = getDelta(stats.target.join(), color)
+          if(newDelta < delta && newDelta < smallestDelta){
+            smallestDelta = newDelta
+            newClosestColor = color
           }
         })
       })
+      setClosestColor(newClosestColor);
+      setDelta(smallestDelta)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board])
@@ -61,7 +65,7 @@ const Board = () => {
   return(
     <div className="my-12">
       <div className="flex mb-[2px] space-x-[2px]">
-        <div className="w-6 h-6 block rounded-[4px]">
+        <div className="w-7 h-7 block rounded-[4px]">
         </div>
         {sourceMap.top.map((tileColor:string, index:number)=>{
           return <Source  key={`top source,${index}`} id={'top-'+index}/>
@@ -84,7 +88,7 @@ const Board = () => {
         })
       }
       <div className="flex mb-[2px] space-x-[2px]">
-        <div className="w-6 h-6 block rounded-[4px]">
+        <div className="w-7 h-7 block rounded-[4px]">
         </div>
         {sourceMap.bottom.map((tileColor:string, index:number)=>{
           return <Source key={`bottom source,${index}`} id={'bottom-'+index} />

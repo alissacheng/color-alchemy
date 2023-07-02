@@ -18,7 +18,7 @@ const UserInfo = () => {
         <p>Closest color </p>
         <Tile tileColor={closestColor} position={{row:null, column:null}} />
         <p>
-          Δ = {delta}
+          Δ = {(delta*100).toFixed(2) + "%"}
         </p>
       </div>
     </div>

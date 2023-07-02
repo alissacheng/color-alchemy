@@ -40,10 +40,10 @@ const Source = ({id}:SourceData) => {
   }
   return(
     <button 
-      className="w-6 h-6 block rounded-[50%] border-gray-400 border-2"
+      className="w-7 h-7 block rounded-[50%] border-[#C0C0C0] border-2"
       style={{background: 'rgb(' + color + ')'}}
       onClick={newMove}
-      disabled={moves < 3 ? false : true}
+      disabled={moves < 3 && color === '0,0,0' ? false : true}
     >
     </button>
   )
