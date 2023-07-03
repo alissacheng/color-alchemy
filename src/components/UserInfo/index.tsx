@@ -9,7 +9,8 @@ const UserInfo: React.FC<any> = () => {
   const [delta, setDelta] = useState<number>(1);
 
   useEffect(()=> {
-    fetch('http://localhost:9876/init',{
+    const url:string = stats.userId ? `http://localhost:9876/init/user/${stats.userId}` : 'http://localhost:9876/init'
+    fetch(url,{
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -48,6 +49,15 @@ const UserInfo: React.FC<any> = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board])
 
+  useEffect(()=> {
+    if(stats.maxMoves && stats.maxMoves - moves === 0 && delta >= 0.1){
+      alert("Failed. Do you want to try again?")
+    }
+    if(delta < 0.1){
+      alert("Success! Do you want to try again?")
+    }
+  }, [delta, moves, stats.maxMoves])
+
   return(
     <div className="text-left flex flex-col space-y-3">
       <h1 className="font-bold">RGB Alchemy</h1>
@@ -55,13 +65,13 @@ const UserInfo: React.FC<any> = () => {
       <p>Moves left: {stats ? stats.maxMoves - moves : 0}</p>
       <div className="flex items-center space-x-2">
         <p>Target color </p>
-        <Tile tileColor={stats?.target.join()} position={null} lastMove={null} />
+        <Tile color={stats?.target.join()} position={null} lastMove={null} />
       </div>
       <div className="flex items-center space-x-2">
         <p>Closest color </p>
-        <Tile tileColor={closestColor} position={null} lastMove={null} />
+        <Tile color={closestColor} position={null} lastMove={null} />
         <p>
-          Δ = {(delta*100).toFixed(2) + "%"}
+          Δ={(delta*100).toFixed(2) + "%"}
         </p>
       </div>
     </div>

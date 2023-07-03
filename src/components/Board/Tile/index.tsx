@@ -3,7 +3,7 @@ import UserContext from "../../../lib/UserContext";
 import { LastMoveData } from "../../../types/LastMoveData";
 
 interface TileData{
-  tileColor: string,
+  color: string,
   position: {
     row: number,
     column: number
@@ -11,29 +11,23 @@ interface TileData{
   lastMove: LastMoveData | null
 }
 
-const Tile: React.FC<TileData> = ({tileColor, position,lastMove}:TileData) => {
+const Tile: React.FC<TileData> = ({color, position, lastMove}:TileData) => {
   const {stats, moves, board, setBoard, closestColor}:any = useContext(UserContext);
-  const [color, setColor] = useState<string>('0,0,0')
-  const [isDrag, setIsDrag] = useState(false)
+  const [isDrag, setIsDrag] = useState<boolean>(false);
 
-  useEffect(()=>{
-    setColor(tileColor)
-  }, [tileColor])
-
-  const updateColor = (oldColor:string, srcColor:string, numerator:number, denominator:number) => {
+  const updateColor = (oldColor:string, sourceColor:string, numerator:number, denominator:number) => {
+    //calculate percentage
     const percentage:number = numerator/denominator
-    //update tile color visually through state
-    const newColor:string = (srcColor.split(',')).map((number:string, index) => {
+    //calculate new color
+    const newColor:string = (sourceColor.split(',')).map((number:string, index) => {
       //number cannot exceed 255
       return Math.min(Math.round(parseInt(number) * percentage) + parseInt(oldColor.split(',')[index]), 255)
     }).join();
-    setColor(newColor)
-    //update the game board
+    //update board with new color
     const newBoard:any[] = [...board]
-    if(position){
-      newBoard[position.row][position.column] = newColor
-      setBoard(newBoard)
-    }
+    if(position)
+      newBoard[position.row][position.column] = newColor;
+      setBoard(newBoard);
   }  
 
   useEffect(()=> {
@@ -59,18 +53,16 @@ const Tile: React.FC<TileData> = ({tileColor, position,lastMove}:TileData) => {
 
   const handleDragStart = (e:React.DragEvent<HTMLDivElement>) => {
     setIsDrag(true)
-    e.dataTransfer.setData('text/plain', 'rgb('+color+')');
+    e.dataTransfer.setData('text/plain', color);
   };
 
-  const handleDragEnd = (event: React.DragEvent<HTMLDivElement>) => {
-    // event.currentTarget.style.opacity = '1';
-    console.log('end')
+  const handleDragEnd = () => {
     setIsDrag(false)
   };
 
   return(
     <div
-      draggable={moves > 2 ? true : false}
+      draggable={moves > 2 && position ? true : false}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       className={`w-7 relative tile h-7 block rounded-[4px] border-[2px]
@@ -81,7 +73,7 @@ const Tile: React.FC<TileData> = ({tileColor, position,lastMove}:TileData) => {
     >
       {!isDrag && (
         <div className="hidden tooltip z-10 text-xs absolute bg-gray-300 text-black rounded-[1px] opacity-90 shadow-md top-[26px] left-1/2 p-[3px]">
-          <p>{tileColor}</p>
+          <p>{color}</p>
         </div>
       )}
     </div>

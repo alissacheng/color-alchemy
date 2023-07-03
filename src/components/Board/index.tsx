@@ -2,19 +2,13 @@ import { useState, useContext, useEffect } from "react";
 import UserContext from "../../lib/UserContext";
 import Tile from "./Tile/index";
 import Source from "./Source";
-import { InitialSourceMap } from "../../types/InitialSourceMap";
 import { LastMoveData } from "../../types/LastMoveData";
 
-const Board: React.FC<any> = () => {
+const Board: React.FC = () => {
   const { stats, board, setBoard }:any = useContext(UserContext);
-  const [sourceMap, setSourceMap] = useState<InitialSourceMap>({top:[], bottom:[], left:[], right:[]});
   const [lastMove, setLastMove] = useState<LastMoveData | null>({direction:'', position:0, color: ''});
 
   const initBoard = () => {
-    //empty source column
-    const sourceColumn:any[]=[];
-    const newSource:InitialSourceMap = {top:[], bottom:[], right: [], left:[]}
-
      //Create board, height = row, width = columns
     const newBoard:any[] = [];
     ([...Array(stats.height)]).forEach((row:any, index)=>{
@@ -25,16 +19,8 @@ const Board: React.FC<any> = () => {
       }
       //combine all rows
       newBoard.push(newRow)
-      //add empty new column for source map
-      sourceColumn.push('0,0,0')
     }) 
     setBoard(newBoard)
-    //create source map
-    newSource.top = [...newBoard[0]];
-    newSource.bottom = [...newBoard[0]];
-    newSource.right=[...sourceColumn]
-    newSource.left=[...sourceColumn]
-    setSourceMap(newSource)
   }
 
   useEffect(()=> {
@@ -49,13 +35,11 @@ const Board: React.FC<any> = () => {
       <div className="flex mb-[2px] space-x-[2px]">
         <div className="w-7 h-7 block rounded-[4px]">
         </div>
-        {sourceMap.top.map((sourceColor:string, index:number)=>{
+        {([...Array(stats.width)]).map((emty:any, index:number)=>{
           return (
             <Source 
               key={`top source,${index}`} 
-              id={'top-'+index} 
-              sourceMap={sourceMap} 
-              setSourceMap={(newMap)=>setSourceMap(newMap)}
+              id={'top-'+index}
               setLastMove={setLastMove}
             />
           )
@@ -70,19 +54,15 @@ const Board: React.FC<any> = () => {
                   {colNum === 0 && (
                     <Source 
                       key={`left source,${rowNum}`} 
-                      id={'left-'+rowNum} 
-                      sourceMap={sourceMap} 
-                      setSourceMap={(newMap)=>setSourceMap(newMap)}
+                      id={'left-'+rowNum}
                       setLastMove={setLastMove}
                     />
                   )}
-                  <Tile tileColor={tileColor} position={{row: rowNum, column: colNum}} key={`${rowNum},${colNum}`} lastMove={lastMove} />
+                  <Tile color={tileColor} position={{row: rowNum, column: colNum}} key={`${rowNum},${colNum}`} lastMove={lastMove} />
                   {colNum === stats.width -1 && (
                     <Source 
                       key={`right source,${rowNum}`} 
-                      id={'right-'+rowNum} 
-                      sourceMap={sourceMap} 
-                      setSourceMap={(newMap)=>setSourceMap(newMap)}
+                      id={'right-'+rowNum}
                       setLastMove={setLastMove}
                     />
                   )}
@@ -96,13 +76,11 @@ const Board: React.FC<any> = () => {
       <div className="flex mb-[2px] space-x-[2px]">
         <div className="w-7 h-7 block rounded-[4px]">
         </div>
-        {sourceMap.bottom.map((sourceColor:string, index:number)=>{
+        {([...Array(stats.width)]).map((emty:any, index:number)=>{
           return (
             <Source 
               key={`bottom source,${index}`} 
-              id={'bottom-'+index} 
-              sourceMap={sourceMap} 
-              setSourceMap={(newMap)=>setSourceMap(newMap)} 
+              id={'bottom-'+index}
               setLastMove={setLastMove}
             />
           )

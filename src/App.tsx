@@ -30,7 +30,7 @@ const App: React.FC = () => {
         closestColor,
         setClosestColor,
       }}>
-        <div className='max-w-wrapper mx-auto p-12'>
+        <div className='max-w-wrapper mx-auto p-6'>
           <UserInfo />
           <Board />
         </div>
