@@ -6,7 +6,7 @@ import { InitialData } from '../../types/InitialData';
 
 const UserInfo: React.FC<any> = () => {
   const {stats, setStats, moves, board, closestColor, setClosestColor}:any = useContext(UserContext);
-  const [delta, setDelta] = useState<number>(1)
+  const [delta, setDelta] = useState<number>(1);
 
   useEffect(()=> {
     fetch('http://localhost:9876/init',{
@@ -25,17 +25,18 @@ const UserInfo: React.FC<any> = () => {
       // Handle any errors
       console.log("something went wrong", error)
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(()=>{
     //update closest color every time a move is made/board is updated
     if(moves > 0){
-      let smallestDelta:number = delta
-      let newClosestColor:string = closestColor
+      let smallestDelta:number = 1;
+      let newClosestColor:string = '0,0,0'
       board.forEach((row:any[])=>{
         row.forEach((color:string)=>{
           const newDelta:number = getDelta(stats.target.join(), color)
-          if(newDelta < delta && newDelta < smallestDelta){
+          if(newDelta < smallestDelta){
             smallestDelta = newDelta
             newClosestColor = color
           }
@@ -54,11 +55,11 @@ const UserInfo: React.FC<any> = () => {
       <p>Moves left: {stats ? stats.maxMoves - moves : 0}</p>
       <div className="flex items-center space-x-2">
         <p>Target color </p>
-        <Tile tileColor={stats?.target.join()} position={{row:null, column:null}} />
+        <Tile tileColor={stats?.target.join()} position={null} lastMove={null} />
       </div>
       <div className="flex items-center space-x-2">
         <p>Closest color </p>
-        <Tile tileColor={closestColor} position={{row:null, column:null}} />
+        <Tile tileColor={closestColor} position={null} lastMove={null} />
         <p>
           Δ = {(delta*100).toFixed(2) + "%"}
         </p>

@@ -2,13 +2,13 @@ import { useState, useContext, useEffect } from "react";
 import UserContext from "../../lib/UserContext";
 import Tile from "./Tile/index";
 import Source from "./Source";
-import { InitialSourceMap } from "../../types/SourceMap";
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { InitialSourceMap } from "../../types/InitialSourceMap";
+import { LastMoveData } from "../../types/LastMoveData";
 
 const Board: React.FC<any> = () => {
   const { stats, board, setBoard }:any = useContext(UserContext);
-  const [sourceMap, setSourceMap] = useState<InitialSourceMap>({top:[], bottom:[], left:[], right:[]})
+  const [sourceMap, setSourceMap] = useState<InitialSourceMap>({top:[], bottom:[], left:[], right:[]});
+  const [lastMove, setLastMove] = useState<LastMoveData | null>({direction:'', position:0, color: ''});
 
   const initBoard = () => {
     //empty source column
@@ -45,54 +45,70 @@ const Board: React.FC<any> = () => {
   }, [stats])
 
   return(
-    <DndProvider backend={HTML5Backend}>
-      <div className="my-12">
-        <div className="flex mb-[2px] space-x-[2px]">
-          <div className="w-7 h-7 block rounded-[4px]">
-          </div>
-          {sourceMap.top.map((tileColor:string, index:number)=>{
-            return <Source key={`top source,${index}`} id={'top-'+index} sourceMap={sourceMap} setSourceMap={(newMap)=>setSourceMap(newMap)}/>
-          })}
+    <div className="my-12">
+      <div className="flex mb-[2px] space-x-[2px]">
+        <div className="w-7 h-7 block rounded-[4px]">
         </div>
-        {board.map((row:any[], rowNum:number)=>{
-          return(
-            <div className="flex mb-[2px] space-x-[2px]" key={rowNum}>
-              {row.map((tileColor:string, colNum)=>{
-                return(
-                  <>
-                    {colNum === 0 && (
-                      <Source 
-                        key={`left source,${rowNum}`} 
-                        id={'left-'+rowNum} 
-                        sourceMap={sourceMap} 
-                        setSourceMap={(newMap)=>setSourceMap(newMap)}
-                      />
-                    )}
-                    <Tile tileColor={tileColor} position={{row: rowNum, column: colNum}} key={`${rowNum},${colNum}`} />
-                    {colNum === stats.width -1 && (
-                      <Source 
-                        key={`right source,${rowNum}`} 
-                        id={'right-'+rowNum} 
-                        sourceMap={sourceMap} 
-                        setSourceMap={(newMap)=>setSourceMap(newMap)}
-                      />
-                    )}
-                  </>
-                )
-              })}
-            </div>
-            )
-          })
-        }
-        <div className="flex mb-[2px] space-x-[2px]">
-          <div className="w-7 h-7 block rounded-[4px]">
-          </div>
-          {sourceMap.bottom.map((tileColor:string, index:number)=>{
-            return <Source key={`bottom source,${index}`} id={'bottom-'+index} sourceMap={sourceMap} setSourceMap={(newMap)=>setSourceMap(newMap)} />
-          })}
-        </div>
+        {sourceMap.top.map((sourceColor:string, index:number)=>{
+          return (
+            <Source 
+              key={`top source,${index}`} 
+              id={'top-'+index} 
+              sourceMap={sourceMap} 
+              setSourceMap={(newMap)=>setSourceMap(newMap)}
+              setLastMove={setLastMove}
+            />
+          )
+        })}
       </div>
-    </DndProvider>
+      {board.map((row:any[], rowNum:number)=>{
+        return(
+          <div className="flex mb-[2px] space-x-[2px]" key={rowNum}>
+            {row.map((tileColor:string, colNum)=>{
+              return(
+                <>
+                  {colNum === 0 && (
+                    <Source 
+                      key={`left source,${rowNum}`} 
+                      id={'left-'+rowNum} 
+                      sourceMap={sourceMap} 
+                      setSourceMap={(newMap)=>setSourceMap(newMap)}
+                      setLastMove={setLastMove}
+                    />
+                  )}
+                  <Tile tileColor={tileColor} position={{row: rowNum, column: colNum}} key={`${rowNum},${colNum}`} lastMove={lastMove} />
+                  {colNum === stats.width -1 && (
+                    <Source 
+                      key={`right source,${rowNum}`} 
+                      id={'right-'+rowNum} 
+                      sourceMap={sourceMap} 
+                      setSourceMap={(newMap)=>setSourceMap(newMap)}
+                      setLastMove={setLastMove}
+                    />
+                  )}
+                </>
+              )
+            })}
+          </div>
+          )
+        })
+      }
+      <div className="flex mb-[2px] space-x-[2px]">
+        <div className="w-7 h-7 block rounded-[4px]">
+        </div>
+        {sourceMap.bottom.map((sourceColor:string, index:number)=>{
+          return (
+            <Source 
+              key={`bottom source,${index}`} 
+              id={'bottom-'+index} 
+              sourceMap={sourceMap} 
+              setSourceMap={(newMap)=>setSourceMap(newMap)} 
+              setLastMove={setLastMove}
+            />
+          )
+        })}
+      </div>
+    </div>
   )
 }
 

@@ -40,3 +40,9 @@
     transform: rotate(360deg);
   }
 }
+
+.tile:hover > .tooltip,
+.tile:focus .tooltip,
+.tile:focus-within .tooltip {
+  display: block;
+}
