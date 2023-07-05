@@ -5,10 +5,12 @@ import getDelta from "../../lib/getDelta";
 import { InitialData } from '../../types/InitialData';
 
 const UserInfo: React.FC<any> = () => {
-  const {stats, setStats, moves, board, closestColor, setClosestColor}:any = useContext(UserContext);
+  const {stats, setStats, moves, setMoves, board, setBoard, closestColor, setClosestColor}:any = useContext(UserContext);
   const [delta, setDelta] = useState<number>(1);
+  const [playAgain, setPlayAgain] = useState<boolean>(false);
+  const [gameOver, setGameOver] = useState<boolean>(true);
 
-  useEffect(()=> {
+  const initGame = () => {
     const url:string = stats.userId ? `http://localhost:9876/init/user/${stats.userId}` : 'http://localhost:9876/init'
     fetch(url,{
       method: "GET",
@@ -21,13 +23,38 @@ const UserInfo: React.FC<any> = () => {
       setStats({...data, color: `rgb(${data.target.join()})` })
       const newDelta = getDelta(data.target.join(), '0,0,0')
       setDelta(newDelta)
+      setGameOver(false)
     })
     .catch(error => {
       // Handle any errors
       console.log("something went wrong", error)
     });
+  }
+
+  useEffect(()=> {
+    initGame()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(()=>{
+    if(playAgain){
+      setMoves(0)
+      setBoard([])
+      setClosestColor('0,0,0');
+      initGame();
+      setPlayAgain(false);
+    } 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playAgain])
+
+  useEffect(()=>{
+    if(gameOver){
+      document.querySelectorAll(".tile").forEach((tile:any)=>{
+        tile.setAttribute("draggable", false);
+        tile.classList.remove("cursor-pointer");
+      })
+    }
+  }, [gameOver])
 
   useEffect(()=>{
     //update closest color every time a move is made/board is updated
@@ -50,13 +77,33 @@ const UserInfo: React.FC<any> = () => {
   }, [board])
 
   useEffect(()=> {
-    if(stats.maxMoves && stats.maxMoves - moves === 0 && delta >= 0.1){
-      alert("Failed. Do you want to try again?")
+    let newPlayAgain:boolean = false;
+    let confirm:boolean = false;
+    //check if ui is updated
+    if(!gameOver){
+      document.querySelectorAll(".tile").forEach((tile:any)=>{
+        //check if frontend is updated for user before closing the game
+        if(tile.style.background.split(' ').join('') === 'rgb(' + closestColor + ')'){
+          if(stats.maxMoves && stats.maxMoves - moves === 0 && delta >= 0.1 && !confirm){
+            confirm = true;
+            setTimeout(function(){
+              newPlayAgain = window.confirm("Failed. Do you want to try again?")
+              setPlayAgain(newPlayAgain)
+              setGameOver(true);
+            }, 300)
+          }
+          if(stats.maxMoves && board.length && delta < 0.1 && !confirm){
+            confirm = true;
+            setTimeout(function(){
+              newPlayAgain = window.confirm("Success! Do you want to try again?");
+              setPlayAgain(newPlayAgain);
+              setGameOver(true);
+            }, 300)
+          }
+        }
+      })
     }
-    if(delta < 0.1){
-      alert("Success! Do you want to try again?")
-    }
-  }, [delta, moves, stats.maxMoves])
+  }, [moves, delta])
 
   return(
     <div className="text-left flex flex-col space-y-3">
@@ -67,7 +114,7 @@ const UserInfo: React.FC<any> = () => {
         <p>Target color </p>
         <Tile color={stats?.target.join()} position={null} lastMove={null} />
       </div>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 c">
         <p>Closest color </p>
         <Tile color={closestColor} position={null} lastMove={null} />
         <p>

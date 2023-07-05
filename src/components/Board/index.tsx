@@ -10,6 +10,7 @@ const Board: React.FC = () => {
 
   const initBoard = () => {
      //Create board, height = row, width = columns
+     setLastMove(null);
     const newBoard:any[] = [];
     ([...Array(stats.height)]).forEach((row:any, index)=>{
       //create rows
