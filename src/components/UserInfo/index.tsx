@@ -1,11 +1,11 @@
 import { useEffect, useState, useContext } from "react";
 import UserContext from "../../lib/UserContext";
-import Tile from "../Board/Tile/index";
+import Tile from "../Gameboard/Tile/index";
 import getDelta from "../../lib/getDelta";
 import { InitialData } from '../../types/InitialData';
 
 const UserInfo: React.FC<any> = () => {
-  const {stats, setStats, moves, setMoves, board, setBoard, closestColor, setClosestColor}:any = useContext(UserContext);
+  const {stats, setStats, moves, setMoves, setGameboard, gameboard, closestColor, setClosestColor}:any = useContext(UserContext);
   const [delta, setDelta] = useState<number>(1);
   const [playAgain, setPlayAgain] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(true);
@@ -39,7 +39,7 @@ const UserInfo: React.FC<any> = () => {
   useEffect(()=>{
     if(playAgain){
       setMoves(0)
-      setBoard([])
+      setGameboard([])
       setClosestColor('0,0,0');
       initGame();
       setPlayAgain(false);
@@ -61,7 +61,7 @@ const UserInfo: React.FC<any> = () => {
     if(moves > 0){
       let smallestDelta:number = 1;
       let newClosestColor:string = '0,0,0'
-      board.forEach((row:any[])=>{
+      gameboard.forEach((row:any[])=>{
         row.forEach((color:string)=>{
           const newDelta:number = getDelta(stats.target.join(), color)
           if(newDelta < smallestDelta){
@@ -74,7 +74,7 @@ const UserInfo: React.FC<any> = () => {
       setDelta(smallestDelta)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [board])
+  }, [gameboard])
 
   useEffect(()=> {
     let newPlayAgain:boolean = false;
@@ -92,7 +92,7 @@ const UserInfo: React.FC<any> = () => {
               setGameOver(true);
             }, 300)
           }
-          if(stats.maxMoves && board.length && delta < 0.1 && !confirm){
+          if(stats.maxMoves && gameboard.length && delta < 0.1 && !confirm){
             confirm = true;
             setTimeout(function(){
               newPlayAgain = window.confirm("Success! Do you want to try again?");

@@ -12,20 +12,32 @@ interface TileData{
 }
 
 const Tile: React.FC<TileData> = ({color, position, lastMove}:TileData) => {
-  const {stats, moves, board, setBoard, closestColor}:any = useContext(UserContext);
+  const {stats, moves, gameboard, setGameboard, closestColor}:any = useContext(UserContext);
   const [isDrag, setIsDrag] = useState<boolean>(false);
   const [colorMix, setColorMix] = useState<any[]>([])
 
-  const updateColor = (oldColor:string, sourceColor:string, numerator:number, denominator:number) => {
-    //calculate percentage
-    const percentage:number = numerator/denominator
-    //calculate new color
-    let newColor:string = '0,0,0'
-    //copy colorMix state to alter and update
-    const newColorMix:any[] = [...colorMix]
+  const updateBoard = (
+    newColor: string
+  ) => {
+    const newBoard:any[] = [...gameboard]
+    if(position) {
+      newBoard[position.row][position.column] = newColor;
+    }
+    setGameboard(newBoard);
+  }
+
+  const updateColor = (
+    oldColor: string, 
+    sourceColor: string, 
+    numerator: number, 
+    denominator: number
+  ) => {
+
+    let newColor: string = '0,0,0'
+    const newColorMix: any[] = [...colorMix]
     if(sourceColor === '0,0,0'){
-      //erase original source if new source is black
-      colorMix.forEach((mix:any, index)=>{
+      //remove affects of old color source if new color source is black
+      colorMix.forEach((mix: any, index)=>{
         if(mix.position === lastMove?.position && mix.direction === lastMove?.direction){
           newColor = (oldColor.split(',')).map((number:string, index) => {
             //get the added value from the old source and remove it
@@ -37,51 +49,62 @@ const Tile: React.FC<TileData> = ({color, position, lastMove}:TileData) => {
         }
       })
     } else {
-      newColor = (sourceColor.split(',')).map((number:string, index) => {
+      const percentage: number = numerator/denominator
+      newColor = (sourceColor.split(',')).map((number: string, index) => {
         //number cannot exceed 255
         return Math.min(Math.round(parseInt(number) * percentage) + parseInt(oldColor.split(',')[index]), 255)
       }).join();
       //update state with new mix only if color is not black
-      const colorMixData:{} = {...lastMove, oldColor, newColor}
+      const colorMixData: {} = {...lastMove, oldColor, newColor}
       newColorMix.push(colorMixData)
       setColorMix(newColorMix)
     }
-    //update board with new color
-    const newBoard:any[] = [...board]
-    if(position)
-      newBoard[position.row][position.column] = newColor;
-      setBoard(newBoard);
-  }  
+    updateBoard(newColor);
+  } 
 
-  useEffect(()=> {
-      if(lastMove && position){
-        //top/bottom position is equal to column number OR right/left position is equal to row number
-        const direction:string = lastMove.direction
-        //check if tile is affected, if so update the tile's color
-        if((direction === 'top' || direction === 'bottom') && lastMove.position === position.column ){
-          const tilePosition:number = position.row + 1
-          const numerator:number = direction === 'bottom' ? tilePosition : (stats.height - tilePosition) + 1
-          const denominator:number = stats.height + 1
-          updateColor(color, lastMove.color, numerator, denominator)
-        }
-        if((direction === 'right' || direction === 'left') && lastMove.position === position.row){
-          const tilePosition:number = position.column + 1
-          const numerator:number = direction === 'right' ? tilePosition : (stats.width - tilePosition) + 1
-          const denominator:number = stats.width + 1
-          updateColor(color, lastMove.color, numerator, denominator)
-        }
+  const updateTile = (
+    direction: string,
+    dimension: string,
+    position: number,
+    color: string,
+    stats: { width: number; height: number }
+  ) => {
+    const tilePosition: number = position + 1;
+    const numerator: number =
+      (direction === 'bottom' || direction === 'right')
+        ? tilePosition
+        : (stats[dimension as keyof typeof stats] - tilePosition) + 1;
+    const denominator: number = stats[dimension as keyof typeof stats] + 1;
+    if(lastMove) updateColor(color, lastMove.color, numerator, denominator);
+  }
+
+  useEffect(() => {
+    if (lastMove && position) {
+      //check if tile is affected by latest move from user, if so update the tile's color
+      if (
+        (lastMove.direction === 'top' || lastMove.direction === 'bottom') &&
+        lastMove.position === position.column
+      ) {
+        updateTile(lastMove.direction, 'height', position.row, color, stats);
       }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      if (
+        (lastMove.direction === 'right' || lastMove.direction === 'left') &&
+        lastMove.position === position.row
+      ) {
+        updateTile(lastMove.direction, 'width', position.column, color, stats);
+      }
+    }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastMove])
 
   const handleDragStart = (e:React.DragEvent<HTMLDivElement>) => {
     setIsDrag(true)
     e.dataTransfer.setData('text/plain', color);
-  };
+  }
 
   const handleDragEnd = () => {
     setIsDrag(false)
-  };
+  }
 
   return(
     <div

@@ -4,29 +4,29 @@ import Tile from "./Tile/index";
 import Source from "./Source";
 import { LastMoveData } from "../../types/LastMoveData";
 
-const Board: React.FC = () => {
-  const { stats, board, setBoard }:any = useContext(UserContext);
-  const [lastMove, setLastMove] = useState<LastMoveData | null>({direction:'', position:0, color: ''});
+const Gameboard: React.FC = () => {
+  const { stats, gameboard, setGameboard }: any = useContext(UserContext);
+  const [lastMove, setLastMove] = useState<LastMoveData | null>({ direction:'', position:0, color: '' });
 
-  const initBoard = () => {
+  const initGameboard = () => {
      //Create board, height = row, width = columns
      setLastMove(null);
-    const newBoard:any[] = [];
+    const newBoard: any[] = [];
     ([...Array(stats.height)]).forEach((row:any, index)=>{
       //create rows
-      const newRow:any[] = []
+      const newRow: any[] = []
       for (var i = 0; i < stats.width; i++) {
         newRow.push('0,0,0');
       }
       //combine all rows
-      newBoard.push(newRow)
+      newBoard.push(newRow);
     }) 
-    setBoard(newBoard)
+    setGameboard(newBoard);
   }
 
   useEffect(()=> {
     if(stats.width > 0 && stats.height > 0){
-      initBoard()
+      initGameboard();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stats])
@@ -46,7 +46,7 @@ const Board: React.FC = () => {
           )
         })}
       </div>
-      {board.map((row:any[], rowNum:number)=>{
+      {gameboard.map((row:any[], rowNum:number)=>{
         return(
           <div className="flex mb-[2px] space-x-[2px]" key={rowNum}>
             {row.map((tileColor:string, colNum)=>{
@@ -59,7 +59,12 @@ const Board: React.FC = () => {
                       setLastMove={setLastMove}
                     />
                   )}
-                  <Tile color={tileColor} position={{row: rowNum, column: colNum}} key={`${rowNum},${colNum}`} lastMove={lastMove} />
+                  <Tile 
+                    color={tileColor} 
+                    position={{row: rowNum, column: colNum}} 
+                    key={`${rowNum},${colNum}`} 
+                    lastMove={lastMove}
+                  />
                   {colNum === stats.width -1 && (
                     <Source 
                       key={`right source,${rowNum}`} 
@@ -91,4 +96,4 @@ const Board: React.FC = () => {
   )
 }
 
-export default Board;
+export default Gameboard;

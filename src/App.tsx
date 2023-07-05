@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import './App.css';
 import UserInfo from './components/UserInfo';
 import UserContext from './lib/UserContext';
-import Board from './components/Board';
 import { InitialData } from './types/InitialData';
+import Gameboard from './components/Gameboard';
 
 const App: React.FC = () => {
   const [moves, setMoves] = useState<number>(0);
-  const [board, setBoard] = useState<any[]>([]);
+  const [gameboard, setGameboard] = useState<any[]>([]);
   const [closestColor, setClosestColor] = useState<string>('0,0,0');
   const [stats, setStats] = useState<InitialData>({
       userId: '',
@@ -25,14 +25,14 @@ const App: React.FC = () => {
         setStats,
         moves,
         setMoves,
-        board,
-        setBoard,
+        gameboard,
+        setGameboard,
         closestColor,
         setClosestColor,
       }}>
         <div className='max-w-wrapper mx-auto p-6'>
           <UserInfo />
-          <Board />
+          <Gameboard />
         </div>
       </UserContext.Provider>
   );
