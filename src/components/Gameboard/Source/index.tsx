@@ -4,11 +4,16 @@ import { LastMoveData } from "../../../types/LastMoveData";
 
 interface SourceData{
   id: string,
-  setLastMove: (newLastMove:LastMoveData) => void
+  setLastMove: (newLastMove: LastMoveData) => void
+}
+
+interface MovesData{
+  moves: number,
+  setMoves: (newMoves: number) => void
 }
 
 const Source: React.FC<SourceData> = ({id, setLastMove}:SourceData) => {
-  const {moves, setMoves}: any = useContext(UserContext);
+  const {moves, setMoves}: MovesData = useContext(UserContext);
   const [color, setColor] = useState<string>('0,0,0');
 
   useEffect(()=> {

@@ -11,7 +11,7 @@ const Gameboard: React.FC = () => {
   const initGameboard = () => {
      //Create board, height = row, width = columns
      setLastMove(null);
-    const newBoard: any[] = [];
+    const newGameboard: any[] = [];
     ([...Array(stats.height)]).forEach((row:any, index)=>{
       //create rows
       const newRow: any[] = []
@@ -19,9 +19,9 @@ const Gameboard: React.FC = () => {
         newRow.push('0,0,0');
       }
       //combine all rows
-      newBoard.push(newRow);
+      newGameboard.push(newRow);
     }) 
-    setGameboard(newBoard);
+    setGameboard(newGameboard);
   }
 
   useEffect(()=> {
