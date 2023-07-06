@@ -4,8 +4,19 @@ import Tile from "../Gameboard/Tile/index";
 import getDelta from "../../lib/getDelta";
 import { InitialData } from '../../types/InitialData';
 
+interface userInfoContextData {
+  moves: number,
+  setMoves: (newMoves: number) => void,
+  gameboard: any[],
+  setGameboard: (newBoard: any[]) => void,
+  stats: InitialData,
+  setStats: (newStats: InitialData) => void,
+  closestColor: string,
+  setClosestColor: (newColor: string) => void
+}
+
 const UserInfo: React.FC<any> = () => {
-  const {stats, setStats, moves, setMoves, setGameboard, gameboard, closestColor, setClosestColor}:any = useContext(UserContext);
+  const {stats, setStats, moves, setMoves, setGameboard, gameboard, closestColor, setClosestColor}: userInfoContextData = useContext(UserContext);
   const [delta, setDelta] = useState<number>(1);
   const [playAgain, setPlayAgain] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(true);
@@ -26,7 +37,7 @@ const UserInfo: React.FC<any> = () => {
       setGameOver(false)
     })
     .catch(error => {
-      // Handle any errors
+      setGameOver(true)
       console.log("something went wrong", error)
       const updateStats: InitialData = {...stats};
       updateStats.width = 0;
@@ -53,9 +64,7 @@ const UserInfo: React.FC<any> = () => {
   }, [playAgain])
 
   useEffect(()=>{
-    if(gameOver) {
-      disableGame();
-    }
+    if(gameOver) disableGame();
   }, [gameOver])
 
   const disableGame = () => {
@@ -66,9 +75,7 @@ const UserInfo: React.FC<any> = () => {
   }
 
   useEffect(()=>{
-    if(moves > 0) {
-      updateClosestColor();
-    }
+    if(moves > 0) updateClosestColor();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameboard])
 
@@ -91,22 +98,18 @@ const UserInfo: React.FC<any> = () => {
   useEffect(()=> {
     let newPlayAgain: boolean = false;
     let confirm: boolean = false;
+    //check if game is being played
     if(!gameOver && stats.maxMoves){
-      document.querySelectorAll(".tile").forEach((tile: any)=>{
-        //check if frontend is updated
-        if(tile.style.background.split(' ').join('') === 'rgb(' + closestColor + ')'){
-          //check if game is over
-          if(((stats.maxMoves - moves === 0 && delta >= 0.1) || delta < 0.1) && !confirm){
-            confirm = true;
-            setTimeout(function(){
-              const message: string = delta < 0.1 ? "Success! Do you want to try again?" : "Failed. Do you want to try again?";
-              newPlayAgain = window.confirm(message)
-              setPlayAgain(newPlayAgain)
-              setGameOver(true);
-            }, 300)
-          }
-        }
-      })
+      //check if game is over and close game if it is
+      if(((stats.maxMoves - moves === 0 && delta >= 0.1) || delta < 0.1) && !confirm){
+        confirm = true;
+        setTimeout(function(){
+          const message: string = delta < 0.1 ? "Success! Do you want to try again?" : "Failed. Do you want to try again?";
+          newPlayAgain = window.confirm(message)
+          setPlayAgain(newPlayAgain)
+          setGameOver(true);
+        }, 300)
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moves, delta])

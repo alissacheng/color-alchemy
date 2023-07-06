@@ -7,13 +7,13 @@ interface SourceData{
   setLastMove: (newLastMove: LastMoveData) => void
 }
 
-interface MovesData{
+interface SourceContextData {
   moves: number,
   setMoves: (newMoves: number) => void
 }
 
-const Source: React.FC<SourceData> = ({id, setLastMove}:SourceData) => {
-  const {moves, setMoves}: MovesData = useContext(UserContext);
+const Source: React.FC<SourceData> = ({id, setLastMove}: SourceData) => {
+  const {moves, setMoves}: SourceContextData = useContext(UserContext);
   const [color, setColor] = useState<string>('0,0,0');
 
   useEffect(()=> {

@@ -1,6 +1,15 @@
 import { useEffect, useState, useContext } from "react";
 import UserContext from "../../../lib/UserContext";
 import { LastMoveData } from "../../../types/LastMoveData";
+import { InitialData } from '../../../types/InitialData';
+
+interface TileContextData{
+  stats: InitialData, 
+  gameboard: any[], 
+  setGameboard: (newBoard: any[]) => void,
+  moves: number,
+  closestColor: string
+}
 
 interface TileData{
   color: string,
@@ -12,7 +21,7 @@ interface TileData{
 }
 
 const Tile: React.FC<TileData> = ({color, position, lastMove}: TileData) => {
-  const {stats, moves, gameboard, setGameboard, closestColor}: any = useContext(UserContext);
+  const {stats, moves, gameboard, setGameboard, closestColor}: TileContextData = useContext(UserContext);
   const [isDrag, setIsDrag] = useState<boolean>(false);
   const [colorMix, setColorMix] = useState<any[]>([])
 
@@ -128,7 +137,7 @@ const Tile: React.FC<TileData> = ({color, position, lastMove}: TileData) => {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       className={`w-7 relative tile h-7 block rounded-[4px] border-[2px]
-        ${(position && closestColor === color && closestColor !== '0,0,0' && moves > 0) || 
+        ${(position && closestColor === color && gameboard[position.row].indexOf(color)) || 
           (moves === 0 && position?.row === 0 && position.column === 0) 
           ? ' border-red-600 ' : ' border-[#C0C0C0] '}
         ${position && moves > 2 ? 'cursor-pointer' : ''}`}

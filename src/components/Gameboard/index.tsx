@@ -3,9 +3,16 @@ import UserContext from "../../lib/UserContext";
 import Tile from "./Tile/index";
 import Source from "./Source";
 import { LastMoveData } from "../../types/LastMoveData";
+import { InitialData } from '../../types/InitialData';
+
+interface GameboardContextData{
+  stats: InitialData, 
+  gameboard: any[], 
+  setGameboard: (newBoard: any[]) => void
+}
 
 const Gameboard: React.FC = () => {
-  const { stats, gameboard, setGameboard }: any = useContext(UserContext);
+  const { stats, gameboard, setGameboard }: GameboardContextData = useContext(UserContext);
   const [lastMove, setLastMove] = useState<LastMoveData | null>({ direction:'', position:0, color: '' });
 
   const initGameboard = () => {
