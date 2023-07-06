@@ -70,9 +70,17 @@ const Tile: React.FC<TileData> = ({color, position, lastMove}: TileData) => {
     const newColorMix: any[] = [...colorMix]
     if(sourceColor === '0,0,0'){
       //remove affects of old color source if new color source is black
-      const pastColorData: {color: string, index: number} = erasePastColor(oldColor);
-      newColor = pastColorData.color
-      newColorMix.splice(pastColorData.index, 1)
+      colorMix.forEach((mix: any, index)=>{
+        if(mix.position === lastMove?.position && mix.direction === lastMove?.direction){
+          newColor = (oldColor.split(',')).map((number:string, index) => {
+            //get the added value from the old source and remove it
+            const oldSourceAddition:number = (parseInt(mix.newColor.split(',')[index]) - parseInt(mix.oldColor.split(',')[index]))
+            return parseInt(number) - oldSourceAddition
+          }).join();
+          //remove mix that has been erased
+          newColorMix.splice(index, 1)
+        }
+      })
     } else {
       //add new color from new color source
       newColor = addNewColor(oldColor, sourceColor, numerator, denominator);
@@ -97,19 +105,6 @@ const Tile: React.FC<TileData> = ({color, position, lastMove}: TileData) => {
       return Math.min(Math.round(parseInt(number) * percentage) + parseInt(oldColor.split(',')[index]), 255)
     }).join();
     return newColor;
-  }
-
-  const erasePastColor = (oldColor: string): { color: string; index: number } | any => {
-    colorMix.forEach((mix: any, index)=>{
-      if(mix.position === lastMove?.position && mix.direction === lastMove?.direction){
-        const newColor = (oldColor.split(',')).map((number:string, index) => {
-          //get the added value from the old source and remove it
-          const oldSourceAddition:number = (parseInt(mix.newColor.split(',')[index]) - parseInt(mix.oldColor.split(',')[index]))
-          return parseInt(number) - oldSourceAddition
-        }).join();
-        return {newColor, index}
-      }
-    })
   }
 
   const updateGameboard = (
