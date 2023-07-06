@@ -65,7 +65,7 @@ const Source: React.FC<SourceData> = ({id, setLastMove}: SourceData) => {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       tabIndex={moves < 3 ? 0 : -1}
-      className={`${moves < 3 ? 'cursor-pointer' : ''} w-7 h-7 block rounded-[50%] border-[#C0C0C0] border-2`}
+      className={`${moves < 3 ? 'cursor-pointer' : ''} w-7 h-7 block rounded-[50%] border-[#C0C0C0] border-2 flex-shrink-0`}
       style={{background: 'rgb(' + color + ')'}}
       onClick={newMove}
       id={id}

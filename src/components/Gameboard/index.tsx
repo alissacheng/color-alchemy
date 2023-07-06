@@ -41,7 +41,7 @@ const Gameboard: React.FC = () => {
   return(
     <div className="my-12">
       <div className="flex mb-[2px] space-x-[2px]">
-        <div className="w-7 h-7 block rounded-[4px]">
+        <div className="w-7 h-7 block rounded-[4px] flex-shrink-0">
         </div>
         {([...Array(stats.width)]).map((emty:any, index:number)=>{
           return (
@@ -58,7 +58,7 @@ const Gameboard: React.FC = () => {
           <div className="flex mb-[2px] space-x-[2px]" key={rowNum}>
             {row.map((tileColor:string, colNum)=>{
               return(
-                <>
+                <div className="flex space-x-[2px]" key={'row-' + rowNum + '-col-' + colNum}>
                   {colNum === 0 && (
                     <Source 
                       key={`left source,${rowNum}`} 
@@ -79,7 +79,7 @@ const Gameboard: React.FC = () => {
                       setLastMove={setLastMove}
                     />
                   )}
-                </>
+                </div>
               )
             })}
           </div>
@@ -87,7 +87,7 @@ const Gameboard: React.FC = () => {
         })
       }
       <div className="flex mb-[2px] space-x-[2px]">
-        <div className="w-7 h-7 block rounded-[4px]">
+        <div className="w-7 h-7 block rounded-[4px] flex-shrink-0">
         </div>
         {([...Array(stats.width)]).map((emty:any, index:number)=>{
           return (

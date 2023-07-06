@@ -136,7 +136,7 @@ const Tile: React.FC<TileData> = ({color, position, lastMove}: TileData) => {
       draggable={moves > 2 && position ? true : false}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      className={`w-7 relative tile h-7 block rounded-[4px] border-[2px]
+      className={`w-7 flex-shrink-0 relative tile h-7 block rounded-[4px] border-[2px]
         ${(position && closestColor === color && gameboard[position.row].indexOf(color)) || 
           (moves === 0 && position?.row === 0 && position.column === 0) 
           ? ' border-red-600 ' : ' border-[#C0C0C0] '}

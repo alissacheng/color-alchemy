@@ -22,6 +22,7 @@ const App: React.FC = () => {
   );
 
   return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
       <UserContext.Provider value={{
         stats,
         setStats,
@@ -32,13 +33,12 @@ const App: React.FC = () => {
         closestColor,
         setClosestColor,
       }}>
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
-          <div className='max-w-wrapper mx-auto p-6'>
-            <UserInfo />
-            <Gameboard />
-          </div>
-        </ErrorBoundary>
+        <div className='max-w-wrapper mx-auto p-6'>
+          <UserInfo />
+          <Gameboard />
+        </div>
       </UserContext.Provider>
+    </ErrorBoundary>
   );
 }
 
