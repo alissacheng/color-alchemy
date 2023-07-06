@@ -48,7 +48,7 @@ const UserInfo: React.FC<any> = () => {
   }
 
   useEffect(()=> {
-    initGame()
+    initGame();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

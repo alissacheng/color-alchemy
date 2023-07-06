@@ -4,6 +4,8 @@ import UserInfo from './components/UserInfo';
 import UserContext from './lib/UserContext';
 import { InitialData } from './types/InitialData';
 import Gameboard from './components/Gameboard';
+import { ErrorBoundary } from 'react-error-boundary'
+import ErrorFallback from './components/ErrorFallback';
 
 const App: React.FC = () => {
   const [moves, setMoves] = useState<number>(0);
@@ -30,10 +32,12 @@ const App: React.FC = () => {
         closestColor,
         setClosestColor,
       }}>
-        <div className='max-w-wrapper mx-auto p-6'>
-          <UserInfo />
-          <Gameboard />
-        </div>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <div className='max-w-wrapper mx-auto p-6'>
+            <UserInfo />
+            <Gameboard />
+          </div>
+        </ErrorBoundary>
       </UserContext.Provider>
   );
 }
