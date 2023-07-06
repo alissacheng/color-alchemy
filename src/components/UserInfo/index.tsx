@@ -20,6 +20,7 @@ const UserInfo: React.FC<any> = () => {
   const [delta, setDelta] = useState<number>(1);
   const [playAgain, setPlayAgain] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(true);
+  const [err, setErr] = useState<string>('')
 
   const initGame = () => {
     const url:string = stats.userId ? `http://localhost:9876/init/user/${stats.userId}` : 'http://localhost:9876/init'
@@ -31,6 +32,7 @@ const UserInfo: React.FC<any> = () => {
     })
     .then(response => response.json())
     .then((data: InitialData) => {
+      setErr('')
       setStats({...data, color: `rgb(${data.target.join()})` })
       const newDelta = getDelta(data.target.join(), '0,0,0')
       setDelta(newDelta)
@@ -43,7 +45,7 @@ const UserInfo: React.FC<any> = () => {
       updateStats.width = 0;
       updateStats.height = 0;
       setStats(updateStats);
-      alert("Sorry, something went wrong. Please try again later.")
+      setErr("Sorry, something went wrong. Please try again later.")
     });
   }
 
@@ -116,20 +118,24 @@ const UserInfo: React.FC<any> = () => {
 
   return(
     <div className="text-left flex flex-col space-y-3">
-      <h1 className="font-bold">RGB Alchemy</h1>
-      <p>User ID: {stats?.userId}</p>
-      <p>Moves left: {stats ? stats.maxMoves - moves : 0}</p>
-      <div className="flex items-center space-x-2">
-        <p>Target color </p>
-        <Tile color={stats?.target.join()} position={null} lastMove={null} />
-      </div>
-      <div className="flex items-center space-x-2 c">
-        <p>Closest color </p>
-        <Tile color={closestColor} position={null} lastMove={null} />
-        <p>
-          Δ={(delta*100).toFixed(2) + "%"}
-        </p>
-      </div>
+      {!err ? (
+        <>
+          <h1 className="font-bold">RGB Alchemy</h1>
+          <p>User ID: {stats?.userId}</p>
+          <p>Moves left: {stats ? stats.maxMoves - moves : 0}</p>
+          <div className="flex items-center space-x-2">
+            <p>Target color </p>
+            <Tile color={stats?.target.join()} position={null} lastMove={null} />
+          </div>
+          <div className="flex items-center space-x-2">
+            <p>Closest color </p>
+            <Tile color={closestColor} position={null} lastMove={null} />
+            <p>Δ={(delta * 100).toFixed(2) + "%"}</p>
+          </div>
+        </>
+      ) : (
+        <h1 className="text-2xl">{err}</h1>
+      )}
     </div>
   )
 }
