@@ -19,7 +19,7 @@ const UserInfo: React.FC<any> = () => {
       },
     })
     .then(response => response.json())
-    .then((data:InitialData) => {
+    .then((data: InitialData) => {
       setStats({...data, color: `rgb(${data.target.join()})` })
       const newDelta = getDelta(data.target.join(), '0,0,0')
       setDelta(newDelta)
@@ -28,6 +28,11 @@ const UserInfo: React.FC<any> = () => {
     .catch(error => {
       // Handle any errors
       console.log("something went wrong", error)
+      const updateStats: InitialData = {...stats};
+      updateStats.width = 0;
+      updateStats.height = 0;
+      setStats(updateStats);
+      alert("Sorry, something went wrong. Please try again later.")
     });
   }
 
@@ -48,61 +53,62 @@ const UserInfo: React.FC<any> = () => {
   }, [playAgain])
 
   useEffect(()=>{
-    if(gameOver){
-      document.querySelectorAll(".tile").forEach((tile:any)=>{
-        tile.setAttribute("draggable", false);
-        tile.classList.remove("cursor-pointer");
-      })
+    if(gameOver) {
+      disableGame();
     }
   }, [gameOver])
 
+  const disableGame = () => {
+    document.querySelectorAll(".tile").forEach((tile:any)=>{
+      tile.setAttribute("draggable", false);
+      tile.classList.remove("cursor-pointer");
+    })
+  }
+
   useEffect(()=>{
-    //update closest color every time a move is made/board is updated
-    if(moves > 0){
-      let smallestDelta:number = 1;
-      let newClosestColor:string = '0,0,0'
-      gameboard.forEach((row:any[])=>{
-        row.forEach((color:string)=>{
-          const newDelta:number = getDelta(stats.target.join(), color)
-          if(newDelta < smallestDelta){
-            smallestDelta = newDelta
-            newClosestColor = color
-          }
-        })
-      })
-      setClosestColor(newClosestColor);
-      setDelta(smallestDelta)
+    if(moves > 0) {
+      updateClosestColor();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameboard])
 
+  const updateClosestColor = () => {
+    let smallestDelta: number = 1;
+    let newClosestColor: string = '0,0,0'
+    gameboard.forEach((row: any[])=>{
+      row.forEach((color: string)=>{
+        const newDelta: number = getDelta(stats.target.join(), color)
+        if(newDelta < smallestDelta){
+          smallestDelta = newDelta;
+          newClosestColor = color;
+        }
+      })
+    })
+    setClosestColor(newClosestColor);
+    setDelta(smallestDelta)
+  }
+
   useEffect(()=> {
-    let newPlayAgain:boolean = false;
-    let confirm:boolean = false;
-    //check if ui is updated
-    if(!gameOver){
-      document.querySelectorAll(".tile").forEach((tile:any)=>{
-        //check if frontend is updated for user before closing the game
+    let newPlayAgain: boolean = false;
+    let confirm: boolean = false;
+    if(!gameOver && stats.maxMoves){
+      document.querySelectorAll(".tile").forEach((tile: any)=>{
+        //check if frontend is updated
         if(tile.style.background.split(' ').join('') === 'rgb(' + closestColor + ')'){
-          if(stats.maxMoves && stats.maxMoves - moves === 0 && delta >= 0.1 && !confirm){
+          //check if game is over
+          if(((stats.maxMoves - moves === 0 && delta >= 0.1) || delta < 0.1) && !confirm){
             confirm = true;
             setTimeout(function(){
-              newPlayAgain = window.confirm("Failed. Do you want to try again?")
+              const message: string = delta < 0.1 ? "Success! Do you want to try again?" : "Failed. Do you want to try again?";
+              newPlayAgain = window.confirm(message)
               setPlayAgain(newPlayAgain)
-              setGameOver(true);
-            }, 300)
-          }
-          if(stats.maxMoves && gameboard.length && delta < 0.1 && !confirm){
-            confirm = true;
-            setTimeout(function(){
-              newPlayAgain = window.confirm("Success! Do you want to try again?");
-              setPlayAgain(newPlayAgain);
               setGameOver(true);
             }, 300)
           }
         }
       })
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moves, delta])
 
   return(
